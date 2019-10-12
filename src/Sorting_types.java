@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -20,7 +21,7 @@ public class Sorting_types {
                     inputSort(array);
                     break;
                 case 4:
-                    mergeSort(array, 1, array.length - 1);
+                    mergesort(array);
                     break;
                 case 5:
                     quickSort(array, 1, array.length - 1);
@@ -158,59 +159,122 @@ public class Sorting_types {
                 + (double) ((endTime - startTime) / 1000000000) + " секунд.");
     }
 
-    private static void mergeSort(int[] arr, int right, int left) {
-        long startTime = System.nanoTime();
-        if (right <= left) return;
-        int mid = (left + right) / 2;
-        mergeSort(arr, left, mid);
-        mergeSort(arr, mid + 1, right);
-        merge(arr, left, mid, right);
-        long endTime = System.nanoTime();
-        System.out.println("Выполнена сортировка слиянием на " + arr.length + " элементов\n" + "Время алгоритма: "
-                + (double) ((endTime - startTime) / 1000000000) + " секунд.");
-    }
+    // Сортировка слиянием
+    private static void mergesort(int[] arr) {
+        float startTime = System.nanoTime();
+        int n = arr.length;
+        boolean c = true;
+        int i = 0;
+        int i1 = 0;
+        int i2 = 0;
+        int n1 = 0;
+        int n2 = 0;
+        double[] barr = new double[n];
+        int mergelen = 0;
 
-    private static void merge(int[] array, int left, int mid, int right) {
-        // вычисляем длину
-        int lengthLeft = mid - left + 1;
-        int lengthRight = right - mid;
-
-        // создаем временные подмассивы
-        int[] leftArray = new int[lengthLeft];
-        int[] rightArray = new int[lengthRight];
-
-        // копируем отсортированные массивы во временные
-        System.arraycopy(array, left, leftArray, 0, lengthLeft);
-        for (int i = 0; i < lengthRight; i++)
-            rightArray[i] = array[mid + i + 1];
-
-        // итераторы содержат текущий индекс временного подмассива
-        int leftIndex = 0;
-        int rightIndex = 0;
-
-        // копируем из leftArray и rightArray обратно в массив
-        for (int i = left; i < right + 1; i++) {
-            // если остаются нескопированные элементы в R и L, копируем минимальный
-            if (leftIndex < lengthLeft && rightIndex < lengthRight) {
-                if (leftArray[leftIndex] < rightArray[rightIndex]) {
-                    array[i] = leftArray[leftIndex];
-                    leftIndex++;
-                } else {
-                    array[i] = rightArray[rightIndex];
-                    rightIndex++;
+        barr = new double[n];
+        mergelen = 1;
+        while (mergelen < n) {
+            if (c) {
+                i = 0;
+                while (i + mergelen <= n) {
+                    i1 = i + 1;
+                    i2 = i + mergelen + 1;
+                    n1 = i + mergelen;
+                    n2 = i + 2 * mergelen;
+                    if (n2 > n) {
+                        n2 = n;
+                    }
+                    while (i1 <= n1 | i2 <= n2) {
+                        if (i1 > n1) {
+                            while (i2 <= n2) {
+                                i = i + 1;
+                                barr[i - 1] = arr[i2 - 1];
+                                i2 = i2 + 1;
+                            }
+                        } else {
+                            if (i2 > n2) {
+                                while (i1 <= n1) {
+                                    i = i + 1;
+                                    barr[i - 1] = arr[i1 - 1];
+                                    i1 = i1 + 1;
+                                }
+                            } else {
+                                if (arr[i1 - 1] > arr[i2 - 1]) {
+                                    i = i + 1;
+                                    barr[i - 1] = arr[i2 - 1];
+                                    i2 = i2 + 1;
+                                } else {
+                                    i = i + 1;
+                                    barr[i - 1] = arr[i1 - 1];
+                                    i1 = i1 + 1;
+                                }
+                            }
+                        }
+                    }
+                }
+                i = i + 1;
+                while (i <= n) {
+                    barr[i - 1] = arr[i - 1];
+                    i = i + 1;
+                }
+            } else {
+                i = 0;
+                while (i + mergelen <= n) {
+                    i1 = i + 1;
+                    i2 = i + mergelen + 1;
+                    n1 = i + mergelen;
+                    n2 = i + 2 * mergelen;
+                    if (n2 > n) {
+                        n2 = n;
+                    }
+                    while (i1 <= n1 | i2 <= n2) {
+                        if (i1 > n1) {
+                            while (i2 <= n2) {
+                                i = i + 1;
+                                arr[i - 1] = (int) barr[i2 - 1];
+                                i2 = i2 + 1;
+                            }
+                        } else {
+                            if (i2 > n2) {
+                                while (i1 <= n1) {
+                                    i = i + 1;
+                                    arr[i - 1] = (int) barr[i1 - 1];
+                                    i1 = i1 + 1;
+                                }
+                            } else {
+                                if (barr[i1 - 1] > barr[i2 - 1]) {
+                                    i = i + 1;
+                                    arr[i - 1] = (int) barr[i2 - 1];
+                                    i2 = i2 + 1;
+                                } else {
+                                    i = i + 1;
+                                    arr[i - 1] = (int) barr[i1 - 1];
+                                    i1 = i1 + 1;
+                                }
+                            }
+                        }
+                    }
+                }
+                i = i + 1;
+                while (i <= n) {
+                    arr[i - 1] = (int) barr[i - 1];
+                    i = i + 1;
                 }
             }
-            // если все элементы были скопированы из rightArray, скопировать остальные из leftArray
-            else if (leftIndex < lengthLeft) {
-                array[i] = leftArray[leftIndex];
-                leftIndex++;
-            }
-            // если все элементы были скопированы из leftArray, скопировать остальные из rightArray
-            else if (rightIndex < lengthRight) {
-                array[i] = rightArray[rightIndex];
-                rightIndex++;
-            }
+            mergelen = 2 * mergelen;
+            c = !c;
         }
+        if (!c) {
+            i = 1;
+            do {
+                arr[i - 1] = (int) barr[i - 1];
+                i = i + 1;
+            } while (i <= n);
+        }
+        float endTime = System.nanoTime();
+        System.out.println("Выполнена сортировка слиянием " + arr.length + " элементов\n" + "Время алгоритма: "
+                + (double) ((endTime - startTime) / 1000000000) + " секунд.");
     }
 
     private static int partition(int[] array, int begin, int end) {
@@ -231,12 +295,12 @@ public class Sorting_types {
 
     // Реализация быстрой сортировки
     private static void quickSort(int[] array, int begin, int end) {
-        long startTime = System.nanoTime();
+        float startTime = System.nanoTime();
         if (end <= begin) return;
         int pivot = partition(array, begin, end);
         quickSort(array, begin, pivot - 1);
         quickSort(array, pivot + 1, end);
-        long endTime = System.nanoTime();
+        float endTime = System.nanoTime();
         System.out.println("Выполнена быстрая сортировка " + array.length + " элементов\n" + "Время алгоритма: "
                 + (double) ((endTime - startTime) / 1000000000) + " секунд.");
     }
